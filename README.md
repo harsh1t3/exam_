@@ -4,6 +4,8 @@
 
 The application requires a MySQL Server hosted on a Local Area Network (intranet). Once set up, the system can be installed on candidate devices, enabling students to log in with administrator-provided credentials and take their assessments seamlessly.
 
+The required username of MySQL is "user" and password is "1316" which can be changed easily just by a local search of the folder by searching "user" and "pass".
+
 ## Key Features
 
 - Efficient exam scheduling and management
