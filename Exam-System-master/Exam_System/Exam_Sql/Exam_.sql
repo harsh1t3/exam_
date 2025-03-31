@@ -1,0 +1,108 @@
+CREATE DATABASE IF NOT EXISTS examsystem;
+USE examsystem;
+
+CREATE TABLE STUDENT (
+    sid INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    dob DATE NOT NULL,
+    gender VARCHAR(10) NOT NULL,
+    address TEXT NOT NULL,
+    pincode VARCHAR(10) NOT NULL,
+    phone_no VARCHAR(15) UNIQUE NOT NULL,
+    email_id VARCHAR(255) UNIQUE NOT NULL,
+    institute_name VARCHAR(255) NOT NULL,
+    branch VARCHAR(100) NOT NULL,
+    semester VARCHAR(20) NOT NULL,
+    year VARCHAR(10) NOT NULL,
+    scholar_no VARCHAR(50) UNIQUE NOT NULL,
+	password VARCHAR(255) NOT NULL DEFAULT 'student123',  
+    recovery_question VARCHAR(50) NOT NULL DEFAULT 'What is your favorite color?',
+    answer VARCHAR(50) NOT NULL DEFAULT 'Red',
+    image BLOB
+);
+
+CREATE TABLE INSTRUCTOR (
+    iid INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    dob DATE NOT NULL,
+    gender VARCHAR(10) NOT NULL,
+    address TEXT NOT NULL,
+    pincode VARCHAR(10) NOT NULL,
+    phone_no VARCHAR(15) UNIQUE NOT NULL,
+    email_id VARCHAR(255) UNIQUE NOT NULL,
+    institute_name VARCHAR(255) NOT NULL,
+    department VARCHAR(100) NOT NULL,
+    instructor_id VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL DEFAULT 'student123', 
+    image BLOB
+);
+
+CREATE TABLE STUDENT_GROUP (
+    group_id INT PRIMARY KEY AUTO_INCREMENT
+);
+
+CREATE TABLE STUDENT_GROUP_MEMBERSHIP (
+    group_id INT NOT NULL,
+    sid INT NOT NULL,
+    PRIMARY KEY (group_id, sid),
+    FOREIGN KEY (group_id) REFERENCES STUDENT_GROUP(group_id) ON DELETE CASCADE,
+    FOREIGN KEY (sid) REFERENCES STUDENT(sid) ON DELETE CASCADE
+);
+
+CREATE TABLE EXAM (
+    eid INT PRIMARY KEY AUTO_INCREMENT,
+    ename VARCHAR(255) NOT NULL,
+    edate_time DATETIME NOT NULL,
+    duration INT NOT NULL,
+    estid INT NOT NULL,  -- Assuming this is instructor ID
+    group_id INT NOT NULL,
+    FOREIGN KEY (group_id) REFERENCES STUDENT_GROUP(group_id) ON DELETE CASCADE,
+    FOREIGN KEY (estid) REFERENCES INSTRUCTOR(iid) ON DELETE CASCADE  -- Fixed reference
+);
+
+CREATE TABLE RESULT (
+    result_id INT PRIMARY KEY AUTO_INCREMENT,
+    eid INT NOT NULL,  -- Changed from `estid` to reference EXAM
+    sid INT NOT NULL,
+    marks_obtained INT NOT NULL,
+    total_marks INT NOT NULL,
+    total_questions INT NOT NULL,
+    questions_attempted INT NOT NULL,
+    correct_answer INT NOT NULL,
+    FOREIGN KEY (eid) REFERENCES EXAM(eid) ON DELETE CASCADE,
+    FOREIGN KEY (sid) REFERENCES STUDENT(sid) ON DELETE CASCADE
+);
+
+CREATE TABLE QUESTION (
+    qid INT PRIMARY KEY AUTO_INCREMENT,
+    question_text TEXT NOT NULL,  -- Renamed for clarity
+    qop1 VARCHAR(255) NOT NULL,
+    qop2 VARCHAR(255) NOT NULL,
+    qop3 VARCHAR(255) NOT NULL,
+    qop4 VARCHAR(255) NOT NULL,
+    qcorrect_answer VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE EXAM_QUESTION (
+    eid INT NOT NULL,
+    qid INT NOT NULL,
+    PRIMARY KEY (eid, qid),
+    FOREIGN KEY (eid) REFERENCES EXAM(eid) ON DELETE CASCADE,
+    FOREIGN KEY (qid) REFERENCES QUESTION(qid) ON DELETE CASCADE
+);
+
+CREATE TABLE SIGNSTUDENT (
+    login_id INT PRIMARY KEY AUTO_INCREMENT,
+    sid INT NOT NULL,
+    FOREIGN KEY (sid) REFERENCES STUDENT(sid) ON DELETE CASCADE
+);
+
+CREATE TABLE INSTRUCTOR_GROUP (
+    group_id INT NOT NULL,
+    iid INT NOT NULL,
+    PRIMARY KEY (group_id, iid),
+    FOREIGN KEY (group_id) REFERENCES STUDENT_GROUP(group_id) ON DELETE CASCADE,
+    FOREIGN KEY (iid) REFERENCES INSTRUCTOR(iid) ON DELETE CASCADE
+);
